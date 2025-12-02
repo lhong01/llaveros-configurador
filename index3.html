@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Configurador de Llaveros</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* Zoom suave en los selectores (tamaños y tipos de llavero) */
+  .item img { transition: transform 0.25s ease; }
+  .item:hover img { transform: scale(2); }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 12px;
+
+    /* ⭐ Nuevo fondo suave */
+    background: linear-gradient(135deg, #f3f3f3, #e8e8ee);
+
+
+
+
+  }
+
+  h1 { text-align: center; margin-bottom: 24px; }
+  h2 { margin-top: 24px; }
+
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .item {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    flex: 1 1 180px;
+    max-width: 240px;
+    transition: 0.1s;
+    background: #fff;
+  }
+
+  .item img {
+    max-width: 100%;
+    max-height: 130px;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+
+  .item:hover {
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    transform: translateY(-1px);
+  }
+
+  .item.selected {
+    border: 2px solid #000;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+  }
+
+  .descripcion {
+    font-size: 13px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .panel {
+    margin-top: 28px;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+
+    /* ⭐ Hacemos el panel más destacado */
+    background: white;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .preview {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .preview img {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .preview img:hover {
+    transform: scale(1.25);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .panel-resumen {
+    grid-column: 1 / -1;
+    padding-top: 10px;
+    margin-top: 12px;
+    border-top: 1px solid #eee;
+  }
+
+  .total-principal {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 4px;
+  }
+
+  .detalle-unitario {
+    font-size: 16px;
+    margin-top: 4px;
+    font-weight: bold;
+  }
+
+  button {
+    padding: 8px 16px;
+    margin-top: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    background: #f2f2f2;
+  }
+  button:hover { background: #e4e4e4; }
+
+  @media (max-width: 700px) {
+    .panel { grid-template-columns: 1fr; }
+  }
+
+  .sugerencia-box {
+    background: #f8f8f8;
+    padding: 16px;
+    border-left: 4px solid #444;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .sugerencia-box ul {
+    padding-left: 20px;
+  }
+  .sugerencia-box li {
+    margin-bottom: 6px;
+    color: #444;
+  }
+</style>
+
+</head>
+<body>
+
+<h1>Personalización y Presupuesto Llaveros PHTC</h1>
+
+<!-- ===================== -->
+<!--       TAMAÑOS         -->
+<!-- ===================== -->
+
+<h2>1. Seleccionar Tamaño</h2>
+
+<div id="modelos" class="grid"></div>
+
+<!-- ===================== -->
+<!--     TIPOS LLAVERO     -->
+<!-- ===================== -->
+
+<h2>2. Seleccionar Tipo de Llavero</h2>
+<div id="argollas" class="grid"></div>
+
+<!-- ===================== -->
+<!--       PANEL FINAL     -->
+<!-- ===================== -->
+
+<div class="panel">
+  <div>
+    <h3>Tamaño seleccionado</h3>
+    <div class="preview">
+      <!-- 🔹 Placeholder cuando no hay tamaño elegido -->
+      <img id="imgModeloSel" src="placeplaceholder_modelo.png">
+      <div>
+        <p><b>Tamaño:</b> <span id="selModelo">-</span></p>
+        <p id="descModeloSel" style="font-size:13px;color:#555;"></p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3>Tipo de llavero seleccionado</h3>
+    <div class="preview">
+      <!-- 🔹 Placeholder cuando no hay tipo de llavero elegido -->
+      <img id="imgArgollaSel" src="placeplaceholder_llavero.png">
+      <div>
+        <p><b>Llavero:</b> <span id="selArgolla">-</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-resumen">
+    <div class="info-colores" style="
+      background:#f7f7f7;
+      padding:14px;
+      border-left:4px solid #444;
+      border-radius:8px;
+      margin-top:20px;
+      margin-bottom:18px;
+    ">
+      <b>Colores:</b> El catálogo de colores está disponible en Excel, con varias opciones y renders de referencia.
+      Si les interesa alguna combinación en particular, me avisan y las renderizo!
+    </div>
+
+    <div class="total-principal">
+      Total pedido (160 unidades): $<span id="totalPedido">0</span>
+    </div>
+    <div class="detalle-unitario">
+      Precio unitario resultante: $<span id="precioUnitario">0</span>
+    </div>
+    <button id="reset">Restablecer</button>
+  </div>
+</div>
+
+<script>
+  // ============================
+  //        TAMAÑOS
+  // ============================
+  const modelos = [
+    {
+      id: 'SMALL',
+      nombre: 'Tamaño Small',
+      precio160: 147000,
+      img: 'LlaveroC.jpg',
+      descripcion: '2 × 2 × 2 cm. Tamaño cúbico.'
+    },
+    {
+      id: 'MEDIUM',
+      nombre: 'Tamaño Medium',
+      precio160: 176000,
+      img: 'LlaveroD.jpg',
+      descripcion: '2.5 × 2.5 × 2.5 cm. Tamaño cúbico.'
+    },
+  ];
+
+  // ============================
+  //      TIPOS DE LLAVERO
+  // ============================
+  const argollas = [
+    {
+      id: 'A1',
+      nombre: 'Llavero Clásico',
+      precio160: 24000,
+      img: 'ArgollaA.png'
+    },
+    {
+      id: 'A2',
+      nombre: 'Llavero Reforzado Sin Fin Plateado',
+      precio160: 49600,
+      img: 'ArgollaB.png'
+    },
+    {
+      id: 'A3',
+      nombre: 'Llavero Reforzado Sin Fin Negro',
+      precio160: 56000,
+      img: 'ArgollaC.png'
+    },
+  ];
+
+  let modeloSel = null;
+  let argollaSel = null;
+
+  function renderItems(lista, contenedorId, tipo) {
+    const cont = document.getElementById(contenedorId);
+    cont.innerHTML = '';
+
+    lista.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <img src="${item.img}">
+        <div><b>${item.nombre}</b></div>
+        <div class="descripcion"><b>Precio x160u:</b> $${item.precio160}</div>
+        ${item.descripcion ? `<div class="descripcion">${item.descripcion}</div>` : ""}
+      `;
+
+      div.addEventListener('click', () => {
+        cont.querySelectorAll('.item').forEach(i => i.classList.remove('selected'));
+        div.classList.add('selected');
+
+        if (tipo === 'modelo') modeloSel = item;
+        else argollaSel = item;
+
+        actualizarPanel();
+      });
+
+      cont.appendChild(div);
+    });
+  }
+
+  function actualizarPanel() {
+    // Tamaño seleccionado
+    document.getElementById('selModelo').textContent = modeloSel ? modeloSel.nombre : '-';
+    document.getElementById('imgModeloSel').src = modeloSel ? modeloSel.img : 'placeplaceholder_modelo.png';
+    document.getElementById('descModeloSel').textContent = modeloSel ? modeloSel.descripcion : '';
+
+    // Llavero seleccionado
+    document.getElementById('selArgolla').textContent = argollaSel ? argollaSel.nombre : '-';
+    document.getElementById('imgArgollaSel').src = argollaSel ? argollaSel.img : 'placeplaceholder_llavero.png';
+
+    if (!modeloSel || !argollaSel) {
+      document.getElementById('precioUnitario').textContent = 0;
+      document.getElementById('totalPedido').textContent = 0;
+      return;
+    }
+
+    const total = modeloSel.precio160 + argollaSel.precio160;
+    const unitario = total / 160;
+
+    document.getElementById('totalPedido').textContent = total;
+    document.getElementById('precioUnitario').textContent = unitario.toFixed(0);
+  }
+
+  document.getElementById('reset').addEventListener('click', () => {
+    modeloSel = null;
+    argollaSel = null;
+    document.querySelectorAll('.item').forEach(i => i.classList.remove('selected'));
+    actualizarPanel();
+  });
+
+  renderItems(modelos, 'modelos', 'modelo');
+  renderItems(argollas, 'argollas', 'argolla');
+  actualizarPanel();
+</script>
+
+</body>
+</html>
